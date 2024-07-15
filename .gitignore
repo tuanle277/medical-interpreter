@@ -137,5 +137,5 @@ keys/
 *.json
 
 # models
-models/
-data/
+backend/models/
+backend/data/
