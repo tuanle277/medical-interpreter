@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gemini_interpreter"
+version = "0.1.0"
+description = "Project:"
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "Flask",
+    "flask-cors",
+    "transformers",
+    "torch",
+    "opencv-python-headless",
+    "google-cloud-vision",
+    "pandas",
+    "datasets",
+    "sentencepiece",
+    "accelerate>=0.21.0",
+    "sacrebleu",
+    "comet_ml"
+]

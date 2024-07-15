@@ -1,0 +1,140 @@
+# Flutter/Dart related
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+**/GeneratedPluginRegistrant.java
+**/GeneratedPluginRegistrant.kt
+
+# Flutter specific
+flutter_app/.flutter-plugins
+flutter_app/.flutter-plugins-dependencies
+flutter_app/.packages
+flutter_app/.pub-cache/
+flutter_app/.pub/
+flutter_app/build/
+flutter_app/ios/Flutter/Flutter.framework
+flutter_app/ios/Flutter/Flutter.podspec
+flutter_app/ios/Flutter/Generated.xcconfig
+flutter_app/ios/Flutter/app.flx
+flutter_app/ios/Flutter/app.framework
+flutter_app/ios/Flutter/app.icns
+flutter_app/ios/Flutter/app.zip
+flutter_app/ios/ServiceDefinitions.json
+flutter_app/ios/Runner/GeneratedPluginRegistrant.*
+flutter_app/.dart_tool/
+flutter_app/.idea/
+flutter_app/.metadata
+flutter_app/.vscode/
+flutter_app/cocoapods/
+flutter_app/macos/Flutter/Flutter.podspec
+flutter_app/macos/Flutter/Generated.xcconfig
+flutter_app/macos/Flutter/ephemeral/
+flutter_app/macos/Flutter/flutter_export_environment.sh
+flutter_app/macos/Flutter/serviceDefinitions.json
+flutter_app/macos/Runner/GeneratedPluginRegistrant.*
+flutter_app/test/
+flutter_app/web/Flutter/
+flutter_app/web/Generated.xcconfig
+flutter_app/web/app.flx
+flutter_app/web/app.framework
+flutter_app/web/app.icns
+flutter_app/web/app.zip
+flutter_app/web/serviceDefinitions.json
+
+# IntelliJ related
+.idea/
+*.iml
+
+# VS Code related
+.vscode/
+
+# Mac related
+.DS_Store
+
+# Python related
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Specific to Jupyter Notebooks
+.ipynb_checkpoints
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+.coverage.*
+.cache/
+.nox/
+*.cover
+
+# Environments
+.env
+.venv
+ENV/
+env/
+venv/
+env.bak/
+venv.bak/
+
+# PyCharm
+.idea/
+
+# mypy
+.mypy_cache/
+
+# End of Python
+
+# Google Service Key
+keys/
+*.json
+
+# models
+models/

@@ -1,0 +1,78 @@
+[32m2024-07-14T02:29:45.229602-0700[0m [1mRunning agent <swarms.structs.agent.Agent object at 0x000001EE141BEF50> on task 'Generate a 10,000 word blog on health and wellness.'[0m
+[32m2024-07-14T02:29:45.230665-0700[0m [1mAutonomous Agent Activated.[0m
+[32m2024-07-14T02:29:45.231699-0700[0m [1mAll systems operational. Executing task...[0m
+[32m2024-07-14T02:29:45.235916-0700[0m [1mTokens available: -8087[0m
+[32m2024-07-14T02:29:45.252628-0700[0m [31m[1mAttempt 1: Error generating response: Got unknown type S[0m
+[32m2024-07-14T02:29:45.275667-0700[0m [31m[1mAttempt 2: Error generating response: Got unknown type S[0m
+[32m2024-07-14T02:29:45.295873-0700[0m [31m[1mAttempt 3: Error generating response: Got unknown type S[0m
+[32m2024-07-14T02:29:45.300425-0700[0m [31m[1mFailed to generate a valid response after retry attempts.[0m
+[32m2024-07-14T02:29:45.303450-0700[0m [1mAutosaving agent state.[0m
+[32m2024-07-14T02:29:45.304417-0700[0m [1mSaving Agent swarm-worker-01 state to: swarm-worker-01_state.json[0m
+[32m2024-07-14T02:29:45.307424-0700[0m [1mAgent <swarms.structs.agent.Agent object at 0x000001EE141BEF50> completed task with result: None[0m
+[32m2024-07-14T02:29:45.307933-0700[0m [31m[1mError running agent <swarms.structs.agent.Agent object at 0x000001EE141BEF50>: Received None as result[0m
+[32m2024-07-14T02:29:45.312666-0700[0m [1mFinal result: None[0m
+[32m2024-07-14T02:32:43.821445-0700[0m [1mRunning agent <swarms.structs.agent.Agent object at 0x000002789D257950> on task 'Generate a 10,000 word blog on health and wellness.'[0m
+[32m2024-07-14T02:32:43.822408-0700[0m [1mAutonomous Agent Activated.[0m
+[32m2024-07-14T02:32:43.823510-0700[0m [1mAll systems operational. Executing task...[0m
+[32m2024-07-14T02:32:43.825716-0700[0m [1mTokens available: -8087[0m
+[32m2024-07-14T02:32:43.854053-0700[0m [31m[1mAttempt 1: Error generating response: Got unknown type S[0m
+[32m2024-07-14T02:32:43.879282-0700[0m [31m[1mAttempt 2: Error generating response: Got unknown type S[0m
+[32m2024-07-14T02:32:43.899420-0700[0m [31m[1mAttempt 3: Error generating response: Got unknown type S[0m
+[32m2024-07-14T02:32:43.903697-0700[0m [31m[1mFailed to generate a valid response after retry attempts.[0m
+[32m2024-07-14T02:32:43.908204-0700[0m [1mAutosaving agent state.[0m
+[32m2024-07-14T02:32:43.908702-0700[0m [1mSaving Agent swarm-worker-01 state to: swarm-worker-01_state.json[0m
+[32m2024-07-14T02:32:43.911696-0700[0m [1mAgent <swarms.structs.agent.Agent object at 0x000002789D257950> completed task with result: None[0m
+[32m2024-07-14T02:32:43.912693-0700[0m [31m[1mError running agent <swarms.structs.agent.Agent object at 0x000002789D257950>: Received None as result[0m
+[32m2024-07-14T02:32:43.915717-0700[0m [1mFinal result: None[0m
+[32m2024-07-14T08:20:10.724191-0700[0m [1mRunning agent <swarms.structs.agent.Agent object at 0x000001B57B3D7F90> on task 'Generate a 10,000 word blog on health and wellness.'[0m
+[32m2024-07-14T08:20:10.724191-0700[0m [1mAutonomous Agent Activated.[0m
+[32m2024-07-14T08:20:10.724191-0700[0m [1mAll systems operational. Executing task...[0m
+[32m2024-07-14T08:20:10.724191-0700[0m [1mTokens available: -8087[0m
+[32m2024-07-14T08:20:10.750531-0700[0m [31m[1mAttempt 1: Error generating response: Got unknown type S[0m
+[32m2024-07-14T08:20:10.771448-0700[0m [31m[1mAttempt 2: Error generating response: Got unknown type S[0m
+[32m2024-07-14T08:20:10.791126-0700[0m [31m[1mAttempt 3: Error generating response: Got unknown type S[0m
+[32m2024-07-14T08:20:10.795427-0700[0m [31m[1mFailed to generate a valid response after retry attempts.[0m
+[32m2024-07-14T08:20:10.798747-0700[0m [1mAutosaving agent state.[0m
+[32m2024-07-14T08:20:10.799742-0700[0m [1mSaving Agent swarm-worker-01 state to: swarm-worker-01_state.json[0m
+[32m2024-07-14T08:20:10.801737-0700[0m [1mAgent <swarms.structs.agent.Agent object at 0x000001B57B3D7F90> completed task with result: None[0m
+[32m2024-07-14T08:20:10.802715-0700[0m [31m[1mError running agent <swarms.structs.agent.Agent object at 0x000001B57B3D7F90>: Received None as result[0m
+[32m2024-07-14T08:20:10.807737-0700[0m [1mFinal result: None[0m
+[32m2024-07-14T08:22:01.325762-0700[0m [1mRunning agent <swarms.structs.agent.Agent object at 0x0000024C21BD2E90> on task 'Generate a 10,000 word blog on health and wellness.'[0m
+[32m2024-07-14T08:22:01.325762-0700[0m [1mAutonomous Agent Activated.[0m
+[32m2024-07-14T08:22:01.325762-0700[0m [1mAll systems operational. Executing task...[0m
+[32m2024-07-14T08:22:01.342550-0700[0m [1mTokens available: -8087[0m
+[32m2024-07-14T08:22:01.360345-0700[0m [31m[1mAttempt 1: Error generating response: Got unknown type S[0m
+[32m2024-07-14T08:22:01.382877-0700[0m [31m[1mAttempt 2: Error generating response: Got unknown type S[0m
+[32m2024-07-14T08:22:01.394744-0700[0m [31m[1mAttempt 3: Error generating response: Got unknown type S[0m
+[32m2024-07-14T08:22:01.402040-0700[0m [31m[1mFailed to generate a valid response after retry attempts.[0m
+[32m2024-07-14T08:22:01.406157-0700[0m [1mAutosaving agent state.[0m
+[32m2024-07-14T08:22:01.407155-0700[0m [1mSaving Agent swarm-worker-01 state to: swarm-worker-01_state.json[0m
+[32m2024-07-14T08:22:01.408153-0700[0m [1mAgent <swarms.structs.agent.Agent object at 0x0000024C21BD2E90> completed task with result: None[0m
+[32m2024-07-14T08:22:01.408911-0700[0m [31m[1mError running agent <swarms.structs.agent.Agent object at 0x0000024C21BD2E90>: Received None as result[0m
+[32m2024-07-14T08:22:01.408911-0700[0m [1mFinal result: None[0m
+[32m2024-07-14T08:22:59.401190-0700[0m [1mRunning agent <swarms.structs.agent.Agent object at 0x000001583A2E5310> on task 'Generate a 10,000 word blog on health and wellness.'[0m
+[32m2024-07-14T08:22:59.401190-0700[0m [1mAutonomous Agent Activated.[0m
+[32m2024-07-14T08:22:59.401190-0700[0m [1mAll systems operational. Executing task...[0m
+[32m2024-07-14T08:22:59.401190-0700[0m [1mTokens available: -8087[0m
+[32m2024-07-14T08:22:59.429448-0700[0m [31m[1mAttempt 1: Error generating response: Got unknown type S[0m
+[32m2024-07-14T08:22:59.449902-0700[0m [31m[1mAttempt 2: Error generating response: Got unknown type S[0m
+[32m2024-07-14T08:22:59.464975-0700[0m [31m[1mAttempt 3: Error generating response: Got unknown type S[0m
+[32m2024-07-14T08:22:59.467126-0700[0m [31m[1mFailed to generate a valid response after retry attempts.[0m
+[32m2024-07-14T08:22:59.467126-0700[0m [1mAutosaving agent state.[0m
+[32m2024-07-14T08:22:59.467126-0700[0m [1mSaving Agent swarm-worker-01 state to: swarm-worker-01_state.json[0m
+[32m2024-07-14T08:22:59.474570-0700[0m [1mAgent <swarms.structs.agent.Agent object at 0x000001583A2E5310> completed task with result: None[0m
+[32m2024-07-14T08:22:59.475736-0700[0m [31m[1mError running agent <swarms.structs.agent.Agent object at 0x000001583A2E5310>: Received None as result[0m
+[32m2024-07-14T08:22:59.479761-0700[0m [1mFinal result: None[0m
+[32m2024-07-14T22:18:53.902195-0700[0m [1mRunning agent <swarms.structs.agent.Agent object at 0x000001D556912850> on task 'Generate a 10,000 word blog on health and wellness.'[0m
+[32m2024-07-14T22:18:53.904156-0700[0m [1mAutonomous Agent Activated.[0m
+[32m2024-07-14T22:18:53.904156-0700[0m [1mAll systems operational. Executing task...[0m
+[32m2024-07-14T22:18:53.906090-0700[0m [1mTokens available: -8087[0m
+[32m2024-07-14T22:18:53.927546-0700[0m [31m[1mAttempt 1: Error generating response: Got unknown type S[0m
+[32m2024-07-14T22:18:53.946504-0700[0m [31m[1mAttempt 2: Error generating response: Got unknown type S[0m
+[32m2024-07-14T22:18:53.964234-0700[0m [31m[1mAttempt 3: Error generating response: Got unknown type S[0m
+[32m2024-07-14T22:18:53.968353-0700[0m [31m[1mFailed to generate a valid response after retry attempts.[0m
+[32m2024-07-14T22:18:53.972889-0700[0m [1mAutosaving agent state.[0m
+[32m2024-07-14T22:18:53.972889-0700[0m [1mSaving Agent swarm-worker-01 state to: swarm-worker-01_state.json[0m
+[32m2024-07-14T22:18:53.974964-0700[0m [1mAgent <swarms.structs.agent.Agent object at 0x000001D556912850> completed task with result: None[0m
+[32m2024-07-14T22:18:53.974964-0700[0m [31m[1mError running agent <swarms.structs.agent.Agent object at 0x000001D556912850>: Received None as result[0m
+[32m2024-07-14T22:18:53.978957-0700[0m [1mFinal result: None[0m
