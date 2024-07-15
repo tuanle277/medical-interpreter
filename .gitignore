@@ -136,6 +136,6 @@ venv.bak/
 keys/
 *.json
 
-# models
-backend/models/
+# Data and models in backend
 backend/data/
+backend/models/
