@@ -1,11 +1,14 @@
 from comet_ml import Experiment  # Import comet_ml first
-
 import pandas as pd
 from transformers import MBart50TokenizerFast, MBartTokenizer, MBartForConditionalGeneration, Seq2SeqTrainer, Seq2SeqTrainingArguments
 from datasets import Dataset
 import logging
-import os 
+import os
 from transformers.utils.logging import enable_progress_bar
+import torch
+import numpy as np
+from nltk.translate.bleu_score import sentence_bleu
+import sacrebleu
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -69,6 +72,49 @@ tokenized_val = val_dataset.map(preprocess_function, batched=True)
 
 logger.info("Datasets tokenized successfully.")
 
+# Enhanced feedback simulation
+def get_human_feedback(predicted_translation, reference_translation):
+    # BLEU score
+    bleu_score = sentence_bleu([reference_translation.split()], predicted_translation.split())
+    
+    # Adequacy and Fluency
+    adequacy = len(set(predicted_translation.split()) & set(reference_translation.split())) / len(reference_translation.split())
+    fluency = 1 - len(set(predicted_translation.split()) - set(reference_translation.split())) / len(predicted_translation.split())
+    
+    # Simulate human feedback as a combination of BLEU, adequacy, and fluency
+    feedback_score = 0.5 * bleu_score + 0.25 * adequacy + 0.25 * fluency
+    
+    # Convert feedback score to feedback signal
+    if feedback_score > 0.7:
+        feedback = 1
+    elif feedback_score < 0.3:
+        feedback = -1
+    else:
+        feedback = 0
+    
+    return feedback
+
+# Custom Seq2SeqTrainer class for RLHF
+class RLHFSeq2SeqTrainer(Seq2SeqTrainer):
+    def compute_loss(self, model, inputs, return_outputs=False):
+        labels = inputs.get("labels")
+        outputs = model(**inputs)
+        logits = outputs.get("logits")
+        
+        # Calculate loss
+        loss_fct = torch.nn.CrossEntropyLoss(ignore_index=tokenizer.pad_token_id)
+        loss = loss_fct(logits.view(-1, model.config.vocab_size), labels.view(-1))
+        
+        # Get human feedback and adjust loss
+        predictions = torch.argmax(logits, dim=-1)
+        for i, (pred, label) in enumerate(zip(predictions, labels)):
+            pred_text = tokenizer.decode(pred, skip_special_tokens=True)
+            label_text = tokenizer.decode(label, skip_special_tokens=True)
+            feedback = get_human_feedback(pred_text, label_text)
+            loss -= feedback * 0.1  # Adjust feedback impact as needed
+        
+        return (loss, outputs) if return_outputs else loss
+
 # Training arguments
 training_args = Seq2SeqTrainingArguments(
     output_dir='./results',
@@ -85,13 +131,11 @@ training_args = Seq2SeqTrainingArguments(
     fp16=True,  # Use mixed precision training
     logging_dir='./logs',
     report_to="comet_ml",  # Log to Comet ML
-    # dataloader_num_workers=os.cpu_count(),  # Use all available CPU cores for data loading
     optim="adamw_torch"  # Use optimized AdamW optimizer
 )
 
-
 # Trainer
-trainer = Seq2SeqTrainer(
+trainer = RLHFSeq2SeqTrainer(
     model=model,
     args=training_args,
     train_dataset=tokenized_train,
