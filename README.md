@@ -1,16 +1,25 @@
-# medical_interpreter_new
+# Medical Interpreter
 
-A new Flutter project.
+A real-time medical interpreter mobile application built with Flutter and a Python backend. The app uses ML Kit for face detection and analysis, providing dynamic visual cues to understand patient engagement. It translates Vietnamese to English and vice versa, integrating visual context for improved interpretation.
+
+## Features
+
+- Real-time face detection and analysis using Google ML Kit.
+- Dynamic visual cues to display understanding levels based on facial expressions.
+- Speech-to-text functionality for capturing and translating spoken language.
+- Backend integration with a Python server to process images and speech for translation and analysis.
+
+## Prerequisites
+
+- Flutter SDK: [Install Flutter](https://flutter.dev/docs/get-started/install)
+- Python 3.9 or higher: [Install Python](https://www.python.org/downloads/)
+- Git LFS: [Install Git LFS](https://git-lfs.github.com/)
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Clone the Repository
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+git clone https://github.com/yourusername/medical-interpreter.git
+cd medical-interpreter
+```
