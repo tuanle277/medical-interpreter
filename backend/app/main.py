@@ -33,7 +33,7 @@ def analyze():
     with open('temp_image.jpg', 'wb') as f:
         f.write(image_bytes)
     gemini_client = GeminiClient()
-    response = gemini_client.analyze('temp_image.jpg')
+    # response = gemini_client.analyze('temp_image.jpg')
     understanding = gemini_client.get_understanding('temp_image.jpg')
     return jsonify({'understanding': understanding})
 

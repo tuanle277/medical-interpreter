@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:universal_io/io.dart' as io;
 
 class CameraView extends StatefulWidget {
   final CustomPaint? customPaint;
@@ -23,8 +24,8 @@ class CameraView extends StatefulWidget {
 }
 
 class _CameraViewState extends State<CameraView> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+  CameraController? _controller; // Made nullable
+  Future<void>? _initializeControllerFuture; // Made nullable
 
   @override
   void initState() {
@@ -33,20 +34,33 @@ class _CameraViewState extends State<CameraView> {
   }
 
   void _initializeCamera() async {
-    final cameras = await availableCameras();
-    final firstCamera = cameras.first;
+    if (io.Platform.isAndroid || io.Platform.isIOS) {
+      try {
+        final cameras = await availableCameras();
+        final firstCamera = cameras.first;
 
-    _controller = CameraController(
-      firstCamera,
-      ResolutionPreset.high,
-    );
+        _controller = CameraController(
+          firstCamera,
+          ResolutionPreset.high,
+        );
 
-    _initializeControllerFuture = _controller.initialize().then((_) {
-      if (mounted) {
-        setState(() {});
-        _controller.startImageStream((CameraImage image) => _processImage(image));
+        // Wait for initialization before starting image stream
+        _initializeControllerFuture = _controller!.initialize();
+
+        if (mounted) {
+          setState(() {});
+          _controller!.startImageStream(_processImage);
+        }
+      } catch (e) {
+        // Handle errors gracefully
+        print('Error initializing camera: $e');
+        // Show an error message or take alternative action
       }
-    });
+    } else {
+      // Handle web-specific camera initialization if needed
+      print('Camera functionality is not implemented for web');
+      // Implement web-specific code if needed
+    }
   }
 
   void _processImage(CameraImage image) async {
@@ -84,7 +98,7 @@ class _CameraViewState extends State<CameraView> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose(); // Dispose when not needed
     super.dispose();
   }
 
@@ -96,7 +110,7 @@ class _CameraViewState extends State<CameraView> {
         if (snapshot.connectionState == ConnectionState.done) {
           return Stack(
             children: <Widget>[
-              CameraPreview(_controller),
+              if (_controller != null) CameraPreview(_controller!),
               if (widget.customPaint != null) widget.customPaint!,
             ],
           );
