@@ -41,7 +41,8 @@ dependencies:
   universal_io: ^2.2.2
   # Image manipulation (for web image conversion)
   image: ^4.1.0 
-
+  mockito: ^5.0.17  # Add mockito for mocking http requests
+  avatar_glow: ^3.0.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6

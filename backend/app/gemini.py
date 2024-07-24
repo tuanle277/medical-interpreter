@@ -24,7 +24,8 @@ class GeminiClient:
                     image_path,
                     mime_type="image/jpeg",
                 ),
-                "What is the understanding level of the person shown in this picture? Provide an indicative number from 0 to 1, with 1 being very understood and 0 being not understood completely",
+                f"Based on the facial expression in this image, What is the understanding level of the person shown in {image_path}? Provide an indicative number from 0 to 1, with 1 being very understood and 0 being not understood completely, return only the number, be as precise as possible, analyze every frame",
             ]
         )
         return response['content']
+

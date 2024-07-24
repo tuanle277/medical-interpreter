@@ -5,6 +5,7 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:avatar_glow/avatar_glow.dart'; // Import for glowing avatar
 
 class InterpreterScreen extends StatefulWidget {
   @override
@@ -22,6 +23,8 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint("Debug time");
+    _sendSpeechForTranslation("Translate this for debugging");
     _speech = stt.SpeechToText();
   }
 
@@ -65,12 +68,14 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
 
   void _sendSpeechForTranslation(String speechText) async {
     // Replace 'your_backend_ip' with the actual IP address of your backend server
+    debugPrint("This is the original text " + speechText);
     final response = await http.post(
-      Uri.parse('http://your_backend_ip:5000/interpret'),
+      Uri.parse('http://127.0.0.1:5000/interpret'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'speech_text': speechText}),
     );
 
+    debugPrint("This is what we want to know " + response.statusCode.toString());
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       _updateUnderstandingLevel(double.parse(result['understanding'] ?? '0.0'));
@@ -86,6 +91,11 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final padding = mediaQuery.padding;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Medical Interpreter: Vietnamese - English', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
@@ -140,7 +150,7 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
 
                             // Replace 'your_backend_ip' with the actual IP address of your backend server
                             final response = await http.post(
-                              Uri.parse('http://your_backend_ip:5000/analyze'),
+                              Uri.parse('http://127.0.0.1:5000/analyze'),
                               headers: {'Content-Type': 'application/octet-stream'},
                               body: bytes,
                             );
@@ -163,8 +173,8 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                    margin: const EdgeInsets.all(16.0),
-                    padding: const EdgeInsets.all(16.0),
+                    margin: EdgeInsets.all(screenWidth * 0.04),
+                    padding: EdgeInsets.all(screenWidth * 0.04),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -181,19 +191,29 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
                       children: <Widget>[
                         Text(
                           isListening ? 'Listening...' : 'Press the button to start listening',
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: screenWidth * 0.02, fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(height: 32.0),
+                        SizedBox(height: screenHeight * 0.04),
                         Expanded(
                           child: SingleChildScrollView(
                             child: Column(
-                              children: _messages.map((message) => _buildChatBubble(message)).toList(),
+                              children: _messages.map((message) => _buildChatBubble(message, screenWidth)).toList(),
                             ),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(isListening ? Icons.mic : Icons.mic_none, color: Colors.teal, size: 40),
-                          onPressed: isListening ? _stopListening : _startListening,
+                        AvatarGlow(  // Glowing avatar for the microphone
+                          // endRadius: screenWidth * 0.1, // Adjust the radius as needed
+                          glowColor: Colors.teal,
+                          child: CircleAvatar(
+                            radius: screenWidth * 0.03, // Adjust the radius as needed
+                            backgroundColor: Colors.white,
+                            child: IconButton(
+                              icon: Icon(isListening ? Icons.mic : Icons.mic_none,
+                                  color: Colors.teal,
+                                  size: screenWidth * 0.04),
+                              onPressed: isListening ? _stopListening : _startListening,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -203,8 +223,7 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-
+            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02, horizontal: screenWidth * 0.06),
             child: UnderstandingIndicator(understandingLevel: understandingLevel),
           ),
         ],
@@ -212,20 +231,20 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
     );
   }
 
-  Widget _buildChatBubble(ChatMessage message) {
+  Widget _buildChatBubble(ChatMessage message, double screenWidth) {
     bool isUser = message.sender == 'You';
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
-        padding: const EdgeInsets.all(12.0),
+        margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01),
+        padding: EdgeInsets.all(screenWidth * 0.02),
         decoration: BoxDecoration(
           color: isUser ? Colors.teal[200] : Colors.grey[300],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
           message.text,
-          style: const TextStyle(fontSize: 16, color: Colors.black),
+          style: TextStyle(fontSize: screenWidth * 0.02, color: Colors.black),
         ),
       ),
     );

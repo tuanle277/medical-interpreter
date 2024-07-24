@@ -4,13 +4,15 @@ from gemini import GeminiClient
 import os
 
 def translate_text(text, visual_context):
-    model_name = "../models/fine-tuned-vinai-translate-vi2en-v2"
+    model_name = "backend/models/fine-tuned-vinai-translate-vi2en-v2"
     tokenizer = MBart50Tokenizer.from_pretrained(model_name)
     model = MBartForConditionalGeneration.from_pretrained(model_name)
-    gemini_client = GeminiClient()
+    # gemini_client = GeminiClient()
     
-    understanding_level = gemini_client.get_understanding(visual_context)
-    input_ids = tokenizer.encode(f'translate Vietnamese to English with context: {text} Context: {understanding_level}', return_tensors='pt')
+    # understanding_level = gemini_client.get_understanding(visual_context)
+    input_ids = tokenizer.encode(f'translate Vietnamese to English with context: {text}', return_tensors='pt')
+                                 
+                                #  They are this much undestanding: {understanding_level}', 
     outputs = model.generate(input_ids)
     translation = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return translation

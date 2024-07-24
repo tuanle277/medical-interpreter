@@ -16,10 +16,12 @@ class UnderstandingIndicator extends StatelessWidget {
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20)
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black26,
+                  color: const Color.fromARGB(66, 54, 53, 53),
                   blurRadius: 10,
                   offset: Offset(0, -5),
                 ),

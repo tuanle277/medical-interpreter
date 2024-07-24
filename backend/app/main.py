@@ -20,11 +20,11 @@ camera = Camera()
 def interpret():
     data = request.get_json()
     speech_text = data['speech_text']
-    
     # Translate speech text
     visual_context = visual_context_global
     translation = translate_text(speech_text, visual_context)
-    
+    print(f"Original text {speech_text}, translated text {transation}")
+
     return jsonify({"translation": translation})
 
 @app.route('/analyze', methods=['POST'])
