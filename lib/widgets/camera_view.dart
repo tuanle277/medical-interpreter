@@ -24,8 +24,11 @@ class CameraView extends StatefulWidget {
 }
 
 class _CameraViewState extends State<CameraView> {
-  CameraController? _controller; // Made nullable
-  Future<void>? _initializeControllerFuture; // Made nullable
+  CameraController? _controller;
+  Future<void>? _initializeControllerFuture;
+  List<Face> _faces = [];
+  double _understandingLevel = 0.0;
+  String? _errorMessage; // To display camera initialization errors
 
   @override
   void initState() {
@@ -34,32 +37,25 @@ class _CameraViewState extends State<CameraView> {
   }
 
   void _initializeCamera() async {
-    if (io.Platform.isAndroid || io.Platform.isIOS) {
-      try {
-        final cameras = await availableCameras();
-        final firstCamera = cameras.first;
+    try {
+      final cameras = await availableCameras();
+      final firstCamera = cameras.first;
+      _controller = CameraController(
+        firstCamera,
+        ResolutionPreset.high,
+      );
 
-        _controller = CameraController(
-          firstCamera,
-          ResolutionPreset.high,
-        );
+      _initializeControllerFuture = _controller?.initialize();
+      await _initializeControllerFuture;
 
-        // Wait for initialization before starting image stream
-        _initializeControllerFuture = _controller!.initialize();
-
-        if (mounted) {
-          setState(() {});
-          _controller!.startImageStream(_processImage);
-        }
-      } catch (e) {
-        // Handle errors gracefully
-        print('Error initializing camera: $e');
-        // Show an error message or take alternative action
+      if (mounted) {
+        setState(() {});
+        _controller?.startImageStream(_processImage);
       }
-    } else {
-      // Handle web-specific camera initialization if needed
-      print('Camera functionality is not implemented for web');
-      // Implement web-specific code if needed
+    } catch (e) {
+      setState(() {
+        _errorMessage = "Error initializing camera: $e";
+      });
     }
   }
 
@@ -122,41 +118,62 @@ class _CameraViewState extends State<CameraView> {
   }
 }
 
-class FacePainter extends CustomPainter {
+class FaceDetectorPainter extends CustomPainter {
   final List<Face> faces;
-  final double understandingLevel;
+  final Size absoluteImageSize;
+  final InputImageRotation imageRotation;
 
-  FacePainter(this.faces, this.understandingLevel);
+  FaceDetectorPainter(this.faces, this.absoluteImageSize, [this.imageRotation = InputImageRotation.rotation0deg]);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final Paint paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..color = Colors.red;
+      ..strokeWidth = 3.0
+      ..color = Colors.greenAccent;
 
-    for (Face face in faces) {
-      final rect = face.boundingBox;
-      canvas.drawRect(rect, paint);
-
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: 'Understanding: ${understandingLevel.toStringAsFixed(2)}',
-          style: TextStyle(
-            color: understandingLevel > 0.5 ? Colors.green : Colors.red,
-            fontSize: 16.0,
-          ),
+    for (final Face face in faces) {
+      canvas.drawRect(
+        _scaleRect(
+          rect: face.boundingBox,
+          imageSize: absoluteImageSize,
+          widgetSize: size,
+          rotation: imageRotation,
         ),
-        textDirection: TextDirection.ltr,
+        paint,
       );
-
-      textPainter.layout();
-      textPainter.paint(canvas, rect.topLeft);
     }
   }
 
   @override
-  bool shouldRepaint(FacePainter oldDelegate) {
-    return oldDelegate.faces != faces || oldDelegate.understandingLevel != understandingLevel;
+  bool shouldRepaint(FaceDetectorPainter oldDelegate) {
+    return oldDelegate.absoluteImageSize != absoluteImageSize ||
+        oldDelegate.faces != faces; 
+  }
+
+  // Helper function to scale the bounding box to the widget size
+  Rect _scaleRect({
+    required Rect rect,
+    required Size imageSize,
+    required Size widgetSize,
+    required InputImageRotation rotation,
+  }) {
+    // Adjust the rectangle based on the image rotation
+    if (rotation == InputImageRotation.rotation90deg || rotation == InputImageRotation.rotation270deg) {
+      final bufferHeight = imageSize.height;
+      final bufferWidth = imageSize.width;
+      imageSize = Size(bufferWidth, bufferHeight);
+    }
+
+    // Calculate scale factors
+    final double scaleX = widgetSize.width / imageSize.width;
+    final double scaleY = widgetSize.height / imageSize.height;
+
+    return Rect.fromLTRB(
+      rect.left.toDouble() * scaleX,
+      rect.top.toDouble() * scaleY,
+      rect.right.toDouble() * scaleX,
+      rect.bottom.toDouble() * scaleY, 
+    );
   }
 }

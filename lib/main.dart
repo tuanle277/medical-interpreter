@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
-
-void main() {
-  runApp(const MedicalInterpreterApp());
+import 'package:firebase_core/firebase_core.dart';
+import 'package:medical_interpreter_new/firebase_options.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+ runApp(const MedicalInterpreterApp());
 }
 
 class MedicalInterpreterApp extends StatelessWidget {

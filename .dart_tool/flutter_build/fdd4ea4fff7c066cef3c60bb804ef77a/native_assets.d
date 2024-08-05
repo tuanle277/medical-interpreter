@@ -1,0 +1,1 @@
+ C:\\Users\\Kevin\\Desktop\\projects\\medical_interpreter_new\\.dart_tool\\flutter_build\\fdd4ea4fff7c066cef3c60bb804ef77a\\native_assets.yaml: 

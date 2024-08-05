@@ -2,7 +2,9 @@ import argparse
 from transformers import MBartForConditionalGeneration, MBart50Tokenizer
 from gemini import GeminiClient
 import os
+from functools import lru_cache
 
+@lru_cache(maxsize=100)
 def translate_text(text, visual_context):
     model_name = "backend/models/fine-tuned-vinai-translate-vi2en-v2"
     tokenizer = MBart50Tokenizer.from_pretrained(model_name)

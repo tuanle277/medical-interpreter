@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../widgets/camera_view.dart';
-import '../widgets/understanding_indicator.dart';
+import '../widgets/emotion_indicator.dart'; // Updated to use EmotionIndicator
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:avatar_glow/avatar_glow.dart'; // Import for glowing avatar
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class InterpreterScreen extends StatefulWidget {
   @override
@@ -13,24 +14,25 @@ class InterpreterScreen extends StatefulWidget {
 }
 
 class _InterpreterScreenState extends State<InterpreterScreen> {
-  double understandingLevel = 0.0;
+  double emotionLevel = 0.0;  // Updated from understandingLevel
+  String emotionLabel = 'Neutral';  // Added to represent the detected emotion
   List<Face> faces = [];
   bool isListening = false;
   late stt.SpeechToText _speech;
   String _speechText = '';
-  List<ChatMessage> _messages = [];
+  final List<ChatMessage> _messages = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
-    debugPrint("Debug time");
-    _sendSpeechForTranslation("Translate this for debugging");
     _speech = stt.SpeechToText();
   }
 
-  void _updateUnderstandingLevel(double newLevel) {
+  void _updateEmotionLevel(double newLevel, String newLabel) {  // Updated to handle emotion
     setState(() {
-      understandingLevel = newLevel;
+      emotionLevel = newLevel;
+      emotionLabel = newLabel;
     });
   }
 
@@ -66,8 +68,37 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
     _speech.stop();
   }
 
+  void _summarizeConversation() async {
+    final conversation = _messages.map((msg) => "${msg.sender}: ${msg.text}").join("\n");
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:5000/summarize'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'conversation': conversation}),
+    );
+
+    if (response.statusCode == 200) {
+      final result = json.decode(response.body);
+      final summary = result['summary'];
+      _addMessage('Summary', summary);
+    }
+  }
+
+  void _diagnoseBasedOnSymptoms() async {
+    final conversation = _messages.map((msg) => msg.text).join("\n");
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:5000/diagnose'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'conversation': conversation}),
+    );
+
+    if (response.statusCode == 200) {
+      final result = json.decode(response.body);
+      final diagnostics = result['diagnostics'];
+      _addMessage('Diagnostics', diagnostics);
+    }
+  }
+
   void _sendSpeechForTranslation(String speechText) async {
-    // Replace 'your_backend_ip' with the actual IP address of your backend server
     debugPrint("This is the original text " + speechText);
     final response = await http.post(
       Uri.parse('http://127.0.0.1:5000/interpret'),
@@ -75,11 +106,24 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
       body: json.encode({'speech_text': speechText}),
     );
 
-    debugPrint("This is what we want to know " + response.statusCode.toString());
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
-      _updateUnderstandingLevel(double.parse(result['understanding'] ?? '0.0'));
+      _updateEmotionLevel(double.parse(result['emotion_level'] ?? '0.0'), result['emotion_label'] ?? 'Neutral');
       _addMessage('Interpreter', result['translation'] ?? '');
+
+      _diagnoseBasedOnSymptoms();
+      _summarizeConversation();
+
+      // Save conversation to Firestore
+      await _firestore.collection('conversations').add({
+        'patient_id': 'example_patient_id',
+        'doctor_id': 'example_doctor_id',
+        'user_message': speechText,
+        'translated_message': result['translation'],
+        'emotion_level': double.parse(result['emotion_level'] ?? '0.0'),
+        'emotion_label': result['emotion_label'],
+        'timestamp': Timestamp.now(),
+      });
     }
   }
 
@@ -94,13 +138,13 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
-    final padding = mediaQuery.padding;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Medical Interpreter: Vietnamese - English', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Colors.teal,
       ),
+      
       body: Column(
         children: <Widget>[
           Expanded(
@@ -124,13 +168,9 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
                       ],
                     ),
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
-                      ),
                       child: CameraView(
                         customPaint: CustomPaint(
-                          painter: FacePainter(faces, understandingLevel),
+                          painter: FaceDetectorPainter(faces, Size(screenWidth, screenHeight)),
                         ),
                         onImage: (inputImage) async {
                           final faceDetector = FaceDetector(
@@ -148,7 +188,6 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
                             // Convert inputImage to bytes for backend processing
                             final bytes = inputImage.bytes;
 
-                            // Replace 'your_backend_ip' with the actual IP address of your backend server
                             final response = await http.post(
                               Uri.parse('http://127.0.0.1:5000/analyze'),
                               headers: {'Content-Type': 'application/octet-stream'},
@@ -157,7 +196,7 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
 
                             if (response.statusCode == 200) {
                               final result = json.decode(response.body);
-                              _updateUnderstandingLevel(double.parse(result['understanding'] ?? '0.0'));
+                              _updateEmotionLevel(double.parse(result['emotion_level'] ?? '0.0'), result['emotion_label'] ?? 'Neutral');
                             }
                           }
 
@@ -201,11 +240,10 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
                             ),
                           ),
                         ),
-                        AvatarGlow(  // Glowing avatar for the microphone
-                          // endRadius: screenWidth * 0.1, // Adjust the radius as needed
+                        AvatarGlow(
                           glowColor: Colors.teal,
                           child: CircleAvatar(
-                            radius: screenWidth * 0.03, // Adjust the radius as needed
+                            radius: screenWidth * 0.03,
                             backgroundColor: Colors.white,
                             child: IconButton(
                               icon: Icon(isListening ? Icons.mic : Icons.mic_none,
@@ -224,7 +262,7 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
           ),
           Container(
             padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02, horizontal: screenWidth * 0.06),
-            child: UnderstandingIndicator(understandingLevel: understandingLevel),
+            child: EmotionIndicator(emotionLevel: emotionLevel, emotionLabel: emotionLabel), // Updated to use EmotionIndicator
           ),
         ],
       ),
