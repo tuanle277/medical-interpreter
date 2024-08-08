@@ -9,6 +9,8 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class InterpreterScreen extends StatefulWidget {
+  const InterpreterScreen({super.key});
+
   @override
   _InterpreterScreenState createState() => _InterpreterScreenState();
 }
@@ -99,7 +101,7 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
   }
 
   void _sendSpeechForTranslation(String speechText) async {
-    debugPrint("This is the original text " + speechText);
+    debugPrint("This is the original text $speechText");
     final response = await http.post(
       Uri.parse('http://127.0.0.1:5000/interpret'),
       headers: {'Content-Type': 'application/json'},
@@ -152,63 +154,65 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  flex: 1,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
+                    flex: 2, // Adjust the flex value to control how much space the camera should take
+                    child: Container(
+                      margin: EdgeInsets.all(screenHeight * 0.04),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
+                          ),
+                        ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      child: CameraView(
-                        customPaint: CustomPaint(
-                          painter: FaceDetectorPainter(faces, Size(screenWidth, screenHeight)),
-                        ),
-                        onImage: (inputImage) async {
-                          final faceDetector = FaceDetector(
-                            options: FaceDetectorOptions(
-                              enableContours: true,
-                              enableClassification: true,
-                            ),
-                          );
-
-                          final List<Face> detectedFaces = await faceDetector.processImage(inputImage);
-
-                          if (detectedFaces.isNotEmpty) {
-                            _updateFaces(detectedFaces);
-
-                            // Convert inputImage to bytes for backend processing
-                            final bytes = inputImage.bytes;
-
-                            final response = await http.post(
-                              Uri.parse('http://127.0.0.1:5000/analyze'),
-                              headers: {'Content-Type': 'application/octet-stream'},
-                              body: bytes,
+                      child: ClipRRect(
+                        child: AspectRatio(
+                            aspectRatio: 16 / 9, // Set this to the aspect ratio of the camera feed
+                            child: CameraView(
+                              customPaint: CustomPaint(
+                                painter: FaceDetectorPainter(faces, Size(screenWidth, screenHeight)),
+                              ),
+                          onImage: (inputImage) async {
+                            final faceDetector = FaceDetector(
+                              options: FaceDetectorOptions(
+                                enableContours: true,
+                                enableClassification: true,
+                              ),
                             );
 
-                            if (response.statusCode == 200) {
-                              final result = json.decode(response.body);
-                              _updateEmotionLevel(double.parse(result['emotion_level'] ?? '0.0'), result['emotion_label'] ?? 'Neutral');
-                            }
-                          }
+                            final List<Face> detectedFaces = await faceDetector.processImage(inputImage);
 
-                          faceDetector.close();
-                        },
-                        onCameraFeedReady: () {},
-                        onDetectorViewModeChanged: () {},
-                        onCameraLensDirectionChanged: (direction) {},
+                            if (detectedFaces.isNotEmpty) {
+                              _updateFaces(detectedFaces);
+
+                              // Convert inputImage to bytes for backend processing
+                              final bytes = inputImage.bytes;
+
+                              final response = await http.post(
+                                Uri.parse('http://127.0.0.1:5000/analyze'),
+                                headers: {'Content-Type': 'application/octet-stream'},
+                                body: bytes,
+                              );
+
+                              if (response.statusCode == 200) {
+                                final result = json.decode(response.body);
+                                _updateEmotionLevel(double.parse(result['emotion_level'] ?? '0.0'), result['emotion_label'] ?? 'Neutral');
+                              }
+                            }
+
+                            faceDetector.close();
+                          },
+
+                        ),
                       ),
                     ),
+                    ),
                   ),
-                ),
                 Expanded(
                   flex: 1,
                   child: Container(
@@ -240,16 +244,18 @@ class _InterpreterScreenState extends State<InterpreterScreen> {
                             ),
                           ),
                         ),
-                        AvatarGlow(
-                          glowColor: Colors.teal,
-                          child: CircleAvatar(
-                            radius: screenWidth * 0.03,
-                            backgroundColor: Colors.white,
-                            child: IconButton(
-                              icon: Icon(isListening ? Icons.mic : Icons.mic_none,
-                                  color: Colors.teal,
-                                  size: screenWidth * 0.04),
-                              onPressed: isListening ? _stopListening : _startListening,
+                        Center(
+                          child: AvatarGlow(
+                            glowColor: Colors.teal,
+                            child: CircleAvatar(
+                              radius: screenWidth * 0.04, // Increased size for better visibility
+                              backgroundColor: Colors.white,
+                              child: IconButton(
+                                icon: Icon(isListening ? Icons.mic : Icons.mic_none,
+                                    color: Colors.teal,
+                                    size: screenWidth * 0.04), // Adjusted size for smaller screens
+                                onPressed: isListening ? _stopListening : _startListening,
+                              ),
                             ),
                           ),
                         ),

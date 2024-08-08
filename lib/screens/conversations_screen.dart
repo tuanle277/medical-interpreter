@@ -9,6 +9,37 @@ class ConversationsScreen extends StatefulWidget {
 
 class _ConversationsScreenState extends State<ConversationsScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<QueryDocumentSnapshot> conversations = [];
+  bool isLoading = true;
+  String errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchConversations();
+  }
+
+  Future<void> fetchConversations() async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('conversations')
+          .orderBy('timestamp', descending: true)
+          .get();
+      setState(() {
+        conversations = querySnapshot.docs;
+        isLoading = false;
+      });
+
+      // Debugging: Print the number of documents retrieved
+      print('Conversations loaded: ${conversations.length}');
+    } catch (error) {
+      setState(() {
+        errorMessage = 'An error occurred while fetching conversations.';
+        isLoading = false;
+      });
+      print('Error: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,68 +48,62 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         title: const Text('Conversations'),
         backgroundColor: Colors.teal,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore
-            .collection('conversations')
-            .orderBy('timestamp', descending: true) // Ensure conversations are sorted
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          // Comprehensive Error Handling
-          if (snapshot.hasError) {
-            print('Error: ${snapshot.error}'); // Log the error for debugging
-            return Center(
-              child: Text(
-                'An error occurred while fetching conversations.',
-                style: TextStyle(fontSize: 16),
-              ),
-            );
-          }
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : errorMessage.isNotEmpty
+              ? Center(
+                  child: Text(
+                    errorMessage,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                )
+              : conversations.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No conversations found.',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: conversations.length,
+                      itemBuilder: (context, index) {
+                        final conversation = conversations[index];
+                        final timestamp =
+                            (conversation['timestamp'] as Timestamp?)?.toDate() ??
+                                DateTime.now();
+                        final understandingLevel =
+                            (conversation['understanding_level'] as num?)?.toDouble() ?? 0.0;
+                        final emotionSummary =
+                            conversation['emotion_summary'] ?? 'No emotion summary';
+                        final translatedMessage =
+                            conversation['translated_message'] ?? 'No translated message';
+                        final userMessage =
+                            conversation['user_message'] ?? 'No user message';
+                        final summary =
+                            conversation['summary'] ?? 'No summary';
+                        final diagnostics =
+                            conversation['diagnostics'] ?? 'No diagnostics';
+                        final doctorId =
+                            conversation['doctor_id'] ?? 'Unknown Doctor';
+                        final patientId =
+                            conversation['patient_id'] ?? 'Unknown Patient';
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+                        // Debugging: Print each conversation's data
+                        print('Conversation: ${conversation.data()}');
 
-          // Empty Data Handling
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Text(
-                'No conversations found.',
-                style: TextStyle(fontSize: 16),
-              ),
-            );
-          }
-
-          final conversations = snapshot.data!.docs;
-
-          // Debugging: Print the number of documents retrieved
-          print('Conversations loaded: ${conversations.length}');
-
-          return ListView.builder(
-            itemCount: conversations.length,
-            itemBuilder: (context, index) {
-              final conversation = conversations[index];
-              final timestamp = (conversation['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now();
-              final understandingLevel = (conversation['understanding_level'] as num?)?.toDouble() ?? 0.0;
-              final emotionSummary = conversation['emotion_summary'] ?? 'No emotion summary';
-              final conversationSummary = conversation['conversation_summary'] ?? 'No conversation summary';
-
-              // Debugging: Print each conversation's data
-              print('Conversation: ${conversation.data()}');
-
-              return ConversationCard(
-                patientId: conversation['patient_id'] ?? 'Unknown ID',
-                dateTime: timestamp,
-                doctorId: conversation['doctor_id'] ?? 'Unknown Doctor',
-                userMessage: conversation['user_message'] ?? 'No message',
-                translatedMessage: conversation['translated_message'] ?? 'No translation',
-                understandingLevel: understandingLevel,
-                emotionSummary: emotionSummary,
-                conversationSummary: conversationSummary,
-              );
-            },
-          );
-        },
-      ),
+                        return ConversationCard(
+                          patientId: patientId,
+                          dateTime: timestamp,
+                          doctorId: doctorId,
+                          userMessage: userMessage,
+                          translatedMessage: translatedMessage,
+                          understandingLevel: understandingLevel,
+                          emotionSummary: emotionSummary,
+                          conversationSummary: summary,
+                          diagnostics: diagnostics,
+                        );
+                      },
+                    ),
     );
   }
 }
@@ -92,6 +117,7 @@ class ConversationCard extends StatelessWidget {
   final double understandingLevel;
   final String emotionSummary;
   final String conversationSummary;
+  final String diagnostics;
 
   ConversationCard({
     required this.patientId,
@@ -102,6 +128,7 @@ class ConversationCard extends StatelessWidget {
     required this.understandingLevel,
     required this.emotionSummary,
     required this.conversationSummary,
+    required this.diagnostics,
   });
 
   @override
@@ -120,6 +147,7 @@ class ConversationCard extends StatelessWidget {
               understandingLevel: understandingLevel,
               emotionSummary: emotionSummary,
               conversationSummary: conversationSummary,
+              diagnostics: diagnostics,
             ),
           ),
         );
@@ -140,9 +168,11 @@ class ConversationCard extends StatelessWidget {
               const SizedBox(height: 8.0),
               Text('Understanding Level: $understandingLevel'),
               const SizedBox(height: 8.0),
-              Text('Emotion Summary: $emotionSummary'), // Display emotion summary
+              Text('Emotion Summary: $emotionSummary'),
               const SizedBox(height: 8.0),
-              Text('Conversation Summary: $conversationSummary'), // Display conversation summary
+              Text('Conversation Summary: $conversationSummary'),
+              const SizedBox(height: 8.0),
+              Text('Diagnostics: $diagnostics'),
             ],
           ),
         ),

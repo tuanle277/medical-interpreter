@@ -141,3 +141,4 @@ backend/models/
 
 # Ignore CSV files in the backend data folder managed by LFS
 backend/data/*.csv
+

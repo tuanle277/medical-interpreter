@@ -6,7 +6,7 @@ class EmotionIndicator extends StatelessWidget {
   final double emotionLevel; // Represents the sentiment score (0.0 - 1.0)
   final String emotionLabel; // Represents the detected emotion as a label (e.g., "Happy", "Sad", "Neutral")
 
-  EmotionIndicator({required this.emotionLevel, required this.emotionLabel});
+  const EmotionIndicator({required this.emotionLevel, required this.emotionLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -21,18 +21,18 @@ class EmotionIndicator extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: indicatorColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
           bottomLeft: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: const Color.fromARGB(66, 54, 53, 53),
+            color: Color.fromARGB(66, 54, 53, 53),
             blurRadius: 10,
             offset: Offset(0, -5),
           ),
@@ -43,12 +43,12 @@ class EmotionIndicator extends StatelessWidget {
         children: [
           Text(
             'Emotion: $emotionLabel',
-            style: TextStyle(color: Colors.white, fontSize: 24),
+            style: const TextStyle(color: Colors.white, fontSize: 24),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             'Emotion Level: ${emotionLevel.toStringAsFixed(2)}',
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: const TextStyle(color: Colors.white, fontSize: 20),
           ),
         ],
       ),

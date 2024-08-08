@@ -9,6 +9,7 @@ class DetailedConversationScreen extends StatelessWidget {
   final double understandingLevel;
   final String emotionSummary;
   final String conversationSummary;
+  final String diagnostics;
 
   DetailedConversationScreen({
     required this.patientId,
@@ -17,8 +18,9 @@ class DetailedConversationScreen extends StatelessWidget {
     required this.userMessage,
     required this.translatedMessage,
     required this.understandingLevel,
-    required this.emotionSummary, 
-    required this.conversationSummary, 
+    required this.emotionSummary,
+    required this.conversationSummary,
+    required this.diagnostics,
   });
 
   @override
@@ -49,11 +51,14 @@ class DetailedConversationScreen extends StatelessWidget {
               const Text('Understanding Level:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               Text(understandingLevel.toString(), style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 16.0),
-              const Text('Emotion Summary:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)), // New section for emotion summary
+              const Text('Emotion Summary:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               Text(emotionSummary, style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 16.0),
-              const Text('Conversation Summary:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)), // New section for conversation summary
+              const Text('Conversation Summary:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               Text(conversationSummary, style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 16.0),
+              const Text('Diagnostics:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(diagnostics, style: const TextStyle(fontSize: 16)),
             ],
           ),
         ),

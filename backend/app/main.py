@@ -5,7 +5,6 @@ from flask_cors import CORS
 from camera import Camera
 from translation import translate_text
 from gemini import GeminiClient
-import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 
@@ -22,47 +21,47 @@ gemini_client = GeminiClient()
 executor = ThreadPoolExecutor()
 
 @app.route('/interpret', methods=['POST'])
-async def interpret():
-    data = await request.get_json()
+def interpret():
+    data = request.get_json()  # No need to await this, it's synchronous
     speech_text = data['speech_text']
 
     # Use cached translation if available
-    translation = await executor.submit(cached_translate_text, speech_text, visual_context_global)
+    translation = executor.submit(cached_translate_text, speech_text, visual_context_global).result()
     print(f"Original text: {speech_text}, translated text: {translation}")
 
     return jsonify({"translation": translation})
 
 @app.route('/analyze', methods=['POST'])
-async def analyze():
-    image_bytes = await request.data
+def analyze():
+    image_bytes = request.data  # This is synchronous as well
     with open('temp_image.jpg', 'wb') as f:
         f.write(image_bytes)
 
     # Run emotion analysis asynchronously
-    understanding = await executor.submit(gemini_client.get_understanding, 'temp_image.jpg')
+    understanding = executor.submit(gemini_client.get_understanding, 'temp_image.jpg').result()
     
     # Update visual context asynchronously
-    await asyncio.get_event_loop().run_in_executor(executor, update_visual_context, understanding)
+    executor.submit(update_visual_context, understanding)
     
     return jsonify({'understanding': understanding})
 
 @app.route('/summarize', methods=['POST'])
-async def summarize():
-    data = await request.get_json()
+def summarize():
+    data = request.get_json()
     conversation = data['conversation']
 
     # Summarize conversation asynchronously
-    summary = await executor.submit(gemini_client.summarize_conversation, conversation)
+    summary = executor.submit(gemini_client.summarize_conversation, conversation).result()
     
     return jsonify({'summary': summary})
 
 @app.route('/diagnose', methods=['POST'])
-async def diagnose():
-    data = await request.get_json()
+def diagnose():
+    data = request.get_json()
     conversation = data['conversation']
 
     # Diagnose conversation asynchronously
-    diagnostics = await executor.submit(gemini_client.real_time_diagnostics, conversation)
+    diagnostics = executor.submit(gemini_client.real_time_diagnostics, conversation).result()
     
     return jsonify({'diagnostics': diagnostics})
 

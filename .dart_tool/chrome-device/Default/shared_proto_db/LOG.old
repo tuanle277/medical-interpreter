@@ -1,20 +1,17 @@
-2024/08/05-01:55:59.193 5d00 Reusing MANIFEST C:\Users\Kevin\AppData\Local\Temp\flutter_tools.cfb22283\flutter_tools_chrome_device.4c34d08d\Default\shared_proto_db/MANIFEST-000001
-2024/08/05-01:55:59.194 5d00 Recovering log #16
-2024/08/05-01:55:59.196 5d00 Reusing old log C:\Users\Kevin\AppData\Local\Temp\flutter_tools.cfb22283\flutter_tools_chrome_device.4c34d08d\Default\shared_proto_db/000016.log 
-2024/08/05-01:55:59.197 5d00 Delete type=0 #3
-2024/08/05-01:55:59.198 5d00 Delete type=0 #4
-2024/08/05-01:55:59.198 5d00 Delete type=0 #7
-2024/08/05-01:55:59.198 5d00 Delete type=0 #10
-2024/08/05-01:55:59.198 5d00 Delete type=0 #13
-2024/08/05-01:56:37.905 1988 Level-0 table #20: started
-2024/08/05-01:56:37.916 1988 Level-0 table #20: 135386 bytes OK
-2024/08/05-01:56:37.923 1988 Delete type=0 #16
-2024/08/05-01:56:37.924 1988 Compacting 4@0 + 1@1 files
-2024/08/05-01:56:37.929 1988 Generated table #21@0: 749 keys, 58247 bytes
-2024/08/05-01:56:37.929 1988 Compacted 4@0 + 1@1 files => 58247 bytes
-2024/08/05-01:56:37.933 1988 compacted to: files[ 0 1 1 0 0 0 0 ]
-2024/08/05-01:56:37.933 1988 Delete type=2 #8
-2024/08/05-01:56:37.933 1988 Delete type=2 #11
-2024/08/05-01:56:37.933 1988 Delete type=2 #14
-2024/08/05-01:56:37.933 1988 Delete type=2 #17
-2024/08/05-01:56:37.933 1988 Delete type=2 #20
+2024/08/07-16:47:34.900 42b8 Reusing MANIFEST C:\Users\Kevin\AppData\Local\Temp\flutter_tools.3af4681\flutter_tools_chrome_device.96729623\Default\shared_proto_db/MANIFEST-000001
+2024/08/07-16:47:34.901 42b8 Recovering log #23
+2024/08/07-16:47:34.903 42b8 Reusing old log C:\Users\Kevin\AppData\Local\Temp\flutter_tools.3af4681\flutter_tools_chrome_device.96729623\Default\shared_proto_db/000023.log 
+2024/08/07-16:47:34.903 42b8 Delete type=0 #3
+2024/08/07-16:47:34.904 42b8 Delete type=0 #4
+2024/08/07-16:47:34.904 42b8 Delete type=0 #7
+2024/08/07-16:47:34.904 42b8 Delete type=2 #8
+2024/08/07-16:47:34.904 42b8 Delete type=0 #10
+2024/08/07-16:47:34.904 42b8 Delete type=2 #11
+2024/08/07-16:47:34.904 42b8 Delete type=0 #13
+2024/08/07-16:47:34.904 42b8 Delete type=2 #14
+2024/08/07-16:47:34.905 42b8 Delete type=0 #16
+2024/08/07-16:47:34.905 42b8 Delete type=2 #17
+2024/08/07-16:47:34.905 42b8 Delete type=0 #19
+2024/08/07-16:48:18.028 42b8 Level-0 table #27: started
+2024/08/07-16:48:18.037 42b8 Level-0 table #27: 136736 bytes OK
+2024/08/07-16:48:18.043 42b8 Delete type=0 #23

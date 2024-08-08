@@ -2,21 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:universal_io/io.dart' as io;
 
 class CameraView extends StatefulWidget {
-  final CustomPaint? customPaint;
+  CustomPaint? customPaint;
   final void Function(InputImage inputImage)? onImage;
-  final VoidCallback? onCameraFeedReady;
-  final VoidCallback? onDetectorViewModeChanged;
-  final void Function(CameraLensDirection direction)? onCameraLensDirectionChanged;
 
-  CameraView({
+  CameraView({super.key, 
     this.customPaint,
     this.onImage,
-    this.onCameraFeedReady,
-    this.onDetectorViewModeChanged,
-    this.onCameraLensDirectionChanged,
   });
 
   @override
@@ -26,9 +19,7 @@ class CameraView extends StatefulWidget {
 class _CameraViewState extends State<CameraView> {
   CameraController? _controller;
   Future<void>? _initializeControllerFuture;
-  List<Face> _faces = [];
-  double _understandingLevel = 0.0;
-  String? _errorMessage; // To display camera initialization errors
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -39,10 +30,19 @@ class _CameraViewState extends State<CameraView> {
   void _initializeCamera() async {
     try {
       final cameras = await availableCameras();
+      print(cameras);
+      if (cameras.isEmpty) {
+        setState(() {
+          _errorMessage = "No cameras available";
+        });
+        return;
+      }
+
+
       final firstCamera = cameras.first;
       _controller = CameraController(
         firstCamera,
-        ResolutionPreset.high,
+        ResolutionPreset.high, // Consider lower if faster startup is needed
       );
 
       _initializeControllerFuture = _controller?.initialize();
@@ -60,41 +60,55 @@ class _CameraViewState extends State<CameraView> {
   }
 
   void _processImage(CameraImage image) async {
-    try {
-      final WriteBuffer allBytes = WriteBuffer();
-      for (Plane plane in image.planes) {
-        allBytes.putUint8List(plane.bytes);
-      }
-      final bytes = allBytes.done().buffer.asUint8List();
-      final inputImage = InputImage.fromBytes(
-        bytes: bytes,
-        inputImageData: InputImageData(
-          size: Size(image.width.toDouble(), image.height.toDouble()),
-          imageRotation: InputImageRotation.rotation0deg,
-          inputImageFormat: InputImageFormat.nv21,
-          planeData: image.planes.map(
-            (Plane plane) {
-              return InputImagePlaneMetadata(
-                bytesPerRow: plane.bytesPerRow,
-                height: plane.height,
-                width: plane.width,
-              );
-            },
-          ).toList(),
-        ),
-      );
-
-      if (widget.onImage != null) {
-        widget.onImage!(inputImage);
-      }
-    } catch (e) {
-      print("Error processing image: $e");
+  try {
+    final WriteBuffer allBytes = WriteBuffer();
+    for (Plane plane in image.planes) {
+      allBytes.putUint8List(plane.bytes);
     }
+    final bytes = allBytes.done().buffer.asUint8List();
+    final inputImage = InputImage.fromBytes(
+      bytes: bytes,
+      inputImageData: InputImageData(
+        size: Size(image.width.toDouble(), image.height.toDouble()),
+        imageRotation: InputImageRotation.rotation0deg,
+        inputImageFormat: InputImageFormat.nv21,
+        planeData: image.planes.map(
+          (Plane plane) {
+            return InputImagePlaneMetadata(
+              bytesPerRow: plane.bytesPerRow,
+              height: plane.height,
+              width: plane.width,
+            );
+          },
+        ).toList(),
+      ),
+    );
+
+    // Initialize Face Detector
+    final options = FaceDetectorOptions();
+    final faceDetector = FaceDetector(options: options);
+    final faces = await faceDetector.processImage(inputImage);
+    debugPrint("Detected ${faces.length} faces");
+
+    // Pass the faces to the custom paint
+    setState(() {
+      widget.customPaint = CustomPaint(
+        painter: FaceDetectorPainter(faces, Size(image.width.toDouble(), image.height.toDouble())),
+      );
+    });
+
+    if (widget.onImage != null) {
+      widget.onImage!(inputImage);
+    }
+  } catch (e) {
+    debugPrint("Error processing image: $e");
   }
+}
+
 
   @override
   void dispose() {
-    _controller?.dispose(); // Dispose when not needed
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -110,13 +124,17 @@ class _CameraViewState extends State<CameraView> {
               if (widget.customPaint != null) widget.customPaint!,
             ],
           );
+        } else if (snapshot.hasError) {
+          return Center(child: Text(_errorMessage ?? 'Unknown error'));
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );
   }
+
 }
+
 
 class FaceDetectorPainter extends CustomPainter {
   final List<Face> faces;
@@ -133,15 +151,14 @@ class FaceDetectorPainter extends CustomPainter {
       ..color = Colors.greenAccent;
 
     for (final Face face in faces) {
-      canvas.drawRect(
-        _scaleRect(
-          rect: face.boundingBox,
-          imageSize: absoluteImageSize,
-          widgetSize: size,
-          rotation: imageRotation,
-        ),
-        paint,
+      final rect = _scaleRect(
+        rect: face.boundingBox,
+        imageSize: absoluteImageSize,
+        widgetSize: size,
+        rotation: imageRotation,
       );
+      print("Drawing box at: $rect");
+      canvas.drawRect(rect, paint);
     }
   }
 
@@ -151,7 +168,6 @@ class FaceDetectorPainter extends CustomPainter {
         oldDelegate.faces != faces; 
   }
 
-  // Helper function to scale the bounding box to the widget size
   Rect _scaleRect({
     required Rect rect,
     required Size imageSize,

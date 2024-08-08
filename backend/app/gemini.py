@@ -10,7 +10,7 @@ gemini_location = os.getenv("GEMINI_LOCATION")
 
 vertexai.init(project=gemini_project_id, location=gemini_location)
 
-model = GenerativeModel("gemini-1.5-flash-001")
+model = GenerativeModel("gemini-1.0-pro-vision")
 
 class GeminiClient:
     def __init__(self):
